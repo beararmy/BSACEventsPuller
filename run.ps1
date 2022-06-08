@@ -16,3 +16,15 @@ function Get-bsacevents-numberofpages {
     return $return
 }
 Get-bsacevents-numberofpages -uri $baseUri
+function Get-bsacevents-eventsfrompage {
+    param (
+        $baseUri = 'https://www.bsac.com/events/',
+        $uri
+    )
+    $content = Invoke-WebRequest -Uri $uri -UserAgent $userAgent -Method Get -UseBasicParsing
+    $collectedLinks = (($content.Links | Where-Object 'class' -Contains 'item-header').href).substring(2)
+    foreach ($link in $collectedLinks) {
+        $baseUri + $link
+    }
+}
+Get-bsacevents-eventsfrompage -uri "https://www.bsac.com/events/?p=2"
